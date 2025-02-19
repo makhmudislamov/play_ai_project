@@ -420,4 +420,7 @@ npm-debug.log
 yarn-error.log
 
 agents.js
+project_notes.txt
+/project_details
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,react,reactnative,node,vuejs,nextjs,visualstudiocode
