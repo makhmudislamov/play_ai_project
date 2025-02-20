@@ -3,7 +3,7 @@
 
 ## PDF Viewer Implementation
 
-![PDF Viewer Demo](demo.png)
+![PDF Viewer Demo](demo_pngs/demo.png)
 
 ### Features
 - PDF file upload and validation
@@ -14,6 +14,32 @@
   - Current page indicator
 - Responsive design with Tailwind CSS
 - Error handling and loading states
+
+## Audio Controls Implementation
+
+### Loading State
+![Audio Loading Demo](demo_pngs/demo3.png)
+- Progress indicator during audio generation
+- Clear loading feedback
+
+### Playback Controls
+![Audio Playback Demo](demo_pngs/demo2.png)
+![Audio Playback Demo](demo_pngs/demo4.png)
+- Play/Pause functionality
+- Current time and duration display
+- Seamless pause/resume behavior
+
+### Error Handling
+- Clear error messages
+- Error dismissal option
+- Graceful error recovery
+
+### Features
+- Initial audio generation with progress tracking
+- Time-based playback simulation
+- Maintains playback position when paused
+- Consistent UI with PDF viewer controls
+
 
 ### Tech Stack
 - PDF.js (CDN) for PDF rendering

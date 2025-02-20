@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
+import AudioControls from './AudioControls';
+
 
 interface PDFViewerProps {
   file?: File;
@@ -26,17 +28,21 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ file, url }) => {
     scale: 1.0,
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [inputPageNumber, setInputPageNumber] = useState<string>(pageInfo.pageNumber.toString());
+  const [inputPageNumber, setInputPageNumber] = useState<string>(pageInfo.pageNumber.toString()); 
+  const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
+  const [audioLoadingProgress, setAudioLoadingProgress] = useState(0);
+  const [audioError, setAudioError] = useState<string | undefined>();
+  const [audioDuration, setAudioDuration] = useState(0);
+  const [audioCurrentTime, setAudioCurrentTime] = useState(0);
+  const playbackIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false); 
+  const [isGenerated, setIsGenerated] = useState(false);
 
 
 // Check if canvas is ready
   useEffect(() => {
-  
-    
     if (canvasRef.current) {
     const context = canvasRef.current.getContext('2d');
-
-    
     if (context) {
         setIsCanvasReady(true);
     }
@@ -51,6 +57,15 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ file, url }) => {
     }
   }, []);
 
+    // Clear intervals on component unmount
+    useEffect(() => {
+    return () => {
+      if (playbackIntervalRef.current) {
+        clearInterval(playbackIntervalRef.current);
+      }
+    };
+  }, []);
+
 
 
   // Validate file type
@@ -60,7 +75,6 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ file, url }) => {
     }
   }, [file]);
 
-    // PDF loading effect
       // PDF loading effect
   useEffect(() => {
     if (!url || !isPdfLibReady) return;
@@ -136,6 +150,18 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ file, url }) => {
         setInputPageNumber(pageInfo.pageNumber.toString());
       }, [pageInfo.pageNumber]);
 
+    useEffect(() => {
+        if (isPlaying) {
+            startPlaybackSimulation();
+        } else {
+            if (playbackIntervalRef.current) {
+            clearInterval(playbackIntervalRef.current);
+            playbackIntervalRef.current = null;
+            }
+        }
+    }, [isPlaying]); // Depend on isPlaying state
+
+
       // navigation handlers
       const handlePreviousPage = async () => {
         if (pageInfo.pageNumber <= 1) return;
@@ -164,6 +190,85 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ file, url }) => {
           setPageInfo(prev => ({ ...prev, pageNumber: newPageNumber }));
         }
       };
+
+        // audio handlers
+    // const handlePlayAudio = async () => {
+    //     setIsGeneratingAudio(true);
+    //     // TODO: Implement actual audio generation and playback
+    //     console.log('Playing audio for page:', pageInfo.pageNumber);
+    //     setIsGeneratingAudio(false);
+    // };
+
+    // manual test 
+    const handlePlayAudio = async () => {
+        if (!isGenerated) {
+          // First time generation
+          setIsGeneratingAudio(true);
+          setAudioError(undefined);
+          setAudioLoadingProgress(0);
+          setAudioCurrentTime(0);
+      
+          let progress = 0;
+          const loadingInterval = setInterval(() => {
+            progress += 10;
+            setAudioLoadingProgress(progress);
+            
+            if (progress >= 100) {
+              clearInterval(loadingInterval);
+              setIsGeneratingAudio(false);
+              setAudioDuration(45);
+              setIsGenerated(true); // Mark as generated
+              setIsPlaying(true);
+              startPlaybackSimulation();
+            }
+          }, 500);
+        } else {
+          // Resume playback
+          setIsPlaying(true);
+          // Will trigger playback through useEffect
+        }
+      };
+      
+      const handlePauseAudio = () => {
+        setIsPlaying(false);
+        if (playbackIntervalRef.current) {
+          clearInterval(playbackIntervalRef.current);
+          playbackIntervalRef.current = null;
+        }
+      };
+      
+      const startPlaybackSimulation = () => {
+        console.log('Starting playback with current time:', audioCurrentTime);
+        
+        // Clear existing interval
+        if (playbackIntervalRef.current) {
+          clearInterval(playbackIntervalRef.current);
+          playbackIntervalRef.current = null;
+        }
+      
+        // Only start interval if we're in playing state
+        if (isPlaying) {
+          playbackIntervalRef.current = setInterval(() => {
+            setAudioCurrentTime(prev => {
+              console.log('Current time:', prev);
+              if (prev >= audioDuration) {
+                if (playbackIntervalRef.current) {
+                  clearInterval(playbackIntervalRef.current);
+                  playbackIntervalRef.current = null;
+                }
+                setIsPlaying(false);
+                return 0;
+              }
+              return prev + 1;
+            });
+          }, 1000);
+        }
+      };
+
+    const handleErrorDismiss = () => {
+        setAudioError(undefined);
+      };
+
 
 
     return (
@@ -205,7 +310,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ file, url }) => {
                         className="w-16 px-2 py-1 border border-blue-300 rounded text-center"
                         aria-label="Page number"
                     />
-                    
+
                     <span className="text-sm">
                         of {pageInfo.totalPages}
                     </span>
@@ -218,6 +323,22 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ file, url }) => {
                     >
                     Next
                     </button>
+                        {/*  AudioControls */}
+                    <div className="ml-4 border-l pl-4">
+                        <AudioControls
+                            onPlay={handlePlayAudio}
+                            onPause={handlePauseAudio}
+                            isLoading={isGeneratingAudio}
+                            loadingProgress={audioLoadingProgress}
+                            error={audioError}
+                            onErrorDismiss={handleErrorDismiss}
+                            duration={audioDuration}
+                            currentTime={audioCurrentTime}
+                            isPlaying={isPlaying}
+                        />
+                    </div>
+
+
                 </div>
             )}
 
