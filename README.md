@@ -1,5 +1,26 @@
 # PlayAI Product Engineering Test Project
 
+
+## PDF Viewer Implementation
+
+![PDF Viewer Demo](demo.png)
+
+### Features
+- PDF file upload and validation
+- Real-time PDF rendering using PDF.js
+- Page navigation:
+  - Next/Previous page controls
+  - Direct page jumping
+  - Current page indicator
+- Responsive design with Tailwind CSS
+- Error handling and loading states
+
+### Tech Stack
+- PDF.js (CDN) for PDF rendering
+- React for UI components
+- Next.js for application framework
+- Tailwind CSS for styling
+
 ## PlayAI Book Reader
 
 - Build a user-friendly web application with file upload capabilities.

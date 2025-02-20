@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 interface PDFUploadProps {
   onUpload: (file: File) => void;
@@ -10,11 +10,23 @@ interface StatusMessage {
   type: StatusType;
 }
 
+
 const PDFUpload: React.FC<PDFUploadProps> = ({ onUpload }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [status, setStatus] = useState<StatusType>('idle');
   const [statusMessage, setStatusMessage] = useState<StatusMessage | null>(null);
+  const [messageTimeout, setMessageTimeout] = useState<NodeJS.Timeout | null>(null);
+
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+        if (messageTimeout) {
+            clearTimeout(messageTimeout);
+        }
+    };
+  }, [messageTimeout]);
 
   // Previous handlers remain the same...
   const preventDefaults = (e: React.DragEvent) => {
@@ -42,32 +54,30 @@ const PDFUpload: React.FC<PDFUploadProps> = ({ onUpload }) => {
   // Updated file handling with better error handling and feedback
   const handleFile = async (file: File) => {
 
-    // console.log('=== handleFile Called ===');
-    // console.log('File:', {
-    //     name: file.name,
-    //     type: file.type,
-    //     size: file.size
-    // });
+    // Clear any existing timeout
+    if (messageTimeout) {
+        clearTimeout(messageTimeout);
+    }
 
     // Reset status
     setStatus('idle');
     setStatusMessage(null);
 
 
-
-
     // Validate file type
     if (!file.type.includes('pdf')) {
-      // console.log('=== Non-PDF File Detected ===');
       setStatus('error');
       setStatusMessage({
           text: 'Only PDF files are allowed',
           type: 'error'
       });
-      // console.log('Status set to:', status);
-      // console.log('Message set to:', statusMessage);
+      const timeout = setTimeout(() => {
+          setStatus('idle');
+          setStatusMessage(null);
+      }, 5000);
+      setMessageTimeout(timeout);
       return;
-  }
+    }
 
     // Validate file size (10MB limit)
     if (file.size > 10 * 1024 * 1024) {
@@ -87,21 +97,33 @@ const PDFUpload: React.FC<PDFUploadProps> = ({ onUpload }) => {
     });
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // await new Promise(resolve => setTimeout(resolve, 100));
       await onUpload(file);
       setStatus('success');
       setStatusMessage({
-        text: 'PDF uploaded successfully',
-        type: 'success'
+          text: 'PDF uploaded successfully',
+          type: 'success'
       });
+      const timeout = setTimeout(() => {
+          setStatus('idle');
+          setStatusMessage(null);
+      }, 5000);
+      setMessageTimeout(timeout);
     } catch (error) {
-      setStatus('error');
-      setStatusMessage({
-        text: 'Error uploading PDF',
-        type: 'error'
-      });
+        setStatus('error');
+        setStatusMessage({
+            text: 'Error uploading PDF',
+            type: 'error'
+        });
+        const timeout = setTimeout(() => {
+            setStatus('idle');
+            setStatusMessage(null);
+        }, 5000);
+        setMessageTimeout(timeout);
     }
+
   };
+
 
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
