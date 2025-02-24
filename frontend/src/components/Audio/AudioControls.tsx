@@ -21,7 +21,7 @@ const AudioControls: React.FC<AudioControlsProps> = ({
   onErrorDismiss,
   duration = 0,
   currentTime = 0,
-  isPlaying = false
+  isPlaying = false,
 }) => {
   // const [isPlaying, setIsPlaying] = useState(false);
 
@@ -53,7 +53,7 @@ const AudioControls: React.FC<AudioControlsProps> = ({
             ✕
           </button>
         </div>
-      ) : isLoading ? (
+      ) : isLoading && !isPlaying ? (
         <div className="flex items-center text-blue-500">
           <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />

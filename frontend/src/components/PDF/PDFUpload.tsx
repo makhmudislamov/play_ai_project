@@ -51,6 +51,8 @@ const PDFUpload: React.FC<PDFUploadProps> = ({ onUpload }) => {
     }
   };
 
+
+
   // Updated file handling with better error handling and feedback
   const handleFile = async (file: File) => {
 
@@ -146,6 +148,8 @@ const PDFUpload: React.FC<PDFUploadProps> = ({ onUpload }) => {
     }
   };
 
+
+
   return (
     <div 
       data-testid="pdf-dropzone"
@@ -177,6 +181,7 @@ const PDFUpload: React.FC<PDFUploadProps> = ({ onUpload }) => {
       >
         Choose file
       </button>
+
 
       {/* Status Messages */}
       {statusMessage && (

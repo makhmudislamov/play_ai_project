@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import AudioControls from '@/components/PDF/AudioControls';
+import AudioControls from '@/components/Audio/AudioControls';
 
 describe('AudioControls Component', () => {
     it('renders play button initially', () => {
