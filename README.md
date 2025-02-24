@@ -1,116 +1,63 @@
-# PlayAI Product Engineering Test Project
+# PlayAI Book Reader
 
-
-## PDF Viewer Implementation
+An interactive PDF reader with AI-powered text-to-speech and chat capabilities.
 
 ![PDF Viewer Demo](demo_pngs/demo.png)
 
-### Features
+## Features
+
+### Core Features
 - PDF file upload and validation
-- Real-time PDF rendering using PDF.js
-- Page navigation:
-  - Next/Previous page controls
-  - Direct page jumping
-  - Current page indicator
-- Responsive design with Tailwind CSS
-- Error handling and loading states
+- Real-time PDF rendering with page navigation
+- Text-to-speech playback of PDF content
+- AI-powered chat assistant for discussing PDF content
+- Responsive design for all screen sizes
 
-## Audio Controls Implementation
+### PDF Viewer
+- Upload and validate PDF files
+- Navigate between pages (next/previous)
+- Direct page number input
+- Current page indicator
+- Real-time page rendering
 
-### Loading State
-![Audio Loading Demo](demo_pngs/demo3.png)
-- Progress indicator during audio generation
-- Clear loading feedback
-
-### Playback Controls
-![Audio Playback Demo](demo_pngs/demo2.png)
-![Audio Playback Demo](demo_pngs/demo4.png)
+### Audio Controls
+- Text-to-speech conversion of page content
 - Play/Pause functionality
-- Current time and duration display
-- Seamless pause/resume behavior
+- Loading progress indicator
+- Error handling with clear feedback
 
-### Error Handling
-- Clear error messages
-- Error dismissal option
-- Graceful error recovery
+### AI Chat Assistant
+- Initial state: Prompts user to upload PDF
+- Post-upload: Enables discussion about current page
+- Strict context adherence: Only discusses uploaded PDF content
+- Safety feature: Returns to upload prompt if PDF is removed
 
-### Features
-- Initial audio generation with progress tracking
-- Time-based playback simulation
-- Maintains playback position when paused
-- Consistent UI with PDF viewer controls
+## Tech Stack
 
+### Frontend
+- Next.js 14
+- React
+- Tailwind CSS
+- PDF.js for PDF rendering
+- Play AI Web SDK for chat integration
 
-### Tech Stack
-- PDF.js (CDN) for PDF rendering
-- React for UI components
-- Next.js for application framework
-- Tailwind CSS for styling
+### Backend
+- Express.js
+- Play AI TTS API integration
+- WebSocket support for real-time communication
 
-## PlayAI Book Reader
+### APIs
+- Play AI Text-to-Speech API
+- Play AI Agent API (Web Embed)
 
-- Build a user-friendly web application with file upload capabilities.
-- Implement front-end logic for displaying PDF content and controlling audio playback.
-- Bonus: integrate the PlayAI Agent API for conversational interaction.
-- Demonstrate proficiency in full-stack development.
+## Getting Started
 
-### Technical Requirements:
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+- Play AI API credentials
 
-- PDF Upload: The user should be able to upload a PDF file through the web interface.
-- Page Display: The uploaded PDF should be parsed and displayed on a per-page basis.
-    - Users should be able to navigate between pages (e.g., using next/previous buttons or a page number input).
-- Text-to-Speech: For each displayed page, the user should be able to initiate audio playback using the PlayAI Text-to-Speech API. The text-to-speech should play the content of the currently displayed page.
-    - Provide controls (play/pause) for the audio playback.
-- PlayAI Integration:
-    - Use [PlayAI's Text-to-Speech API](https://docs.play.ai/tts-api-reference/endpoints/v1/tts/stream/post-playdialog) using HTTP or Websocket to read the content of the page.
-- The application should use the API Key provided to make authenticated API calls.
-    - API Key:
-    - User ID:
-- Select a PlayAI voice, you can use one of the agents from the provided list.
-
-### (Bonus) Interactive Chat with the book:
-
-Implement an optional voice chat interface that allows the user to ask questions about the currently displayed page. This chat should use [the PlayAI Agent API](https://docs.play.ai/api-reference/introduction), you [could use our web-embed widget for that](https://docs.play.ai/api-reference/web-embed) or build something custom using the websocket API.
-
----
-
-### Functional Requirements:
-
-**User Interface (UI):**
-
-- The web app should have a clear and intuitive user interface.
-- The UI should include components for uploading a PDF, displaying pages, playing audio, and the optional voice chat widget.
-- The layout should be responsive for different screen sizes.
-
-### **Evaluation Criteria:**
-
-- Does the application meet the core requirements (PDF upload, page display, and audio playback)?
-- Is the optional chat feature (if implemented) working correctly?
-- Are there any bugs in the UI or functionality?
-- Is there any attention to detail in the UI.
-- How much time did it take to finish and deliver it?
-- Is the code well-structured, readable, and maintainable?
-
----
-
-**Bonus Points:**
-
-- Implement the interactive voice chat interface.
-- Implement a voice selection dropdown.
-- Implement a progress indicator while generating the audio for the pages.
-- Provide a UI to adjust the speed and temperature of the audio output.
-- Implement any additional features that improve UX (Show your creativity).
-
-
-**Deliverables:**
-
-- A fully functional web application hosted on a server (you could use Replit).
-- Source code for the application on github.
-- A brief README file explaining how to run the app, what technologies were used, and a quick overview of the design decisions.
-- Time Allotment: 8 hours — one aspect of evaluation is how fast are you in shipping product features.
-
-**Additional Notes:**
-
-You are free to choose any suitable full-stack technology (e.g., React, Vue.js with Node.js) but we prefer the NextJS, React, and Tailwind stack.
-
-You can utilize any open-source libraries for PDF processing, UI components, etc.
+### Environment Setup
+1. Clone the repository
+2. Create `.env.local` in `frontend/`: `NEXT_PUBLIC_PLAY_AI_WEB_EMBED_ID="your_embed_id"`
+2. Create `.env` in `backend/`: `PLAY_AI_API_KEY=your_api_key` and `PLAY_AI_USER_ID=your_user_id`
